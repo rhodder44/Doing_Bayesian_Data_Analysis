@@ -220,3 +220,5 @@ BernGrid = function( Theta , pTheta , Data , plotType=c("Points","Bars")[2] ,
   
   return( pThetaGivenData )
 } # end of function
+
+BernGrid()

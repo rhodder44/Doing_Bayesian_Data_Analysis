@@ -101,7 +101,7 @@ text( 0.7 , .9*max(y) , bquote( paste(Delta , "x = " ,.(dx)) )
       , adj=c(0,.5) , cex=1.5 )
 text( 0.7 , .75*max(y) ,
       bquote(
-        paste( sum(,x,) , " " , Delta , "x p(x) = " , .(signif(area,3)) )
+      paste( sum(,x,) , " " , Delta , "x p(x) = " , .(signif(area,3)) )
       ) , adj=c(0,.5) , cex=1.5 )
 # Save the plot to an EPS file.
 saveGraph( file = "IntegralOfDensity" , type="eps" )
@@ -190,3 +190,130 @@ data.frame(grade = c("1st", "6th", "11th", "total"),
 # p(food, grade) = 0.02
 # p(food) = 0.4 * p(grade) = 0.2 = 0.08
                  
+
+
+
+################################################################
+# 5.1 Bayes Rule, using posterior as next prior
+################################################################
+
+# Suppose that the same randomly selected person as in Table 5.4 gets re-tested after the first test result was
+# positive, and on the re-test, the result is negative. When taking into account the results of both tests, what is the
+# probability that the person has the disease?
+
+# Specify hit rate of test:
+p_positive_given_disease    <- 0.99
+
+# Specify false alarm rate of test
+p_positive_given_no_disease <- 0.05
+
+# Specify original prior
+p_disease                   <- 0.001
+
+# Bayes Rule for first, positive test 
+p_disease_give_positive <- p_positive_given_disease * p_disease / 
+                           (p_positive_given_disease * p_disease + p_positive_given_no_disease * (1.0 - p_disease))
+
+show(p_disease_give_positive)
+
+####### Use the above posterior as the next calculations prior
+# Set the prior to the new probability of have the diseae:
+# p_disease = p_disease_given_positive
+
+# Bayes Rule for second, negative test: 
+p_disease_given_negative <- ( ( 1.0 - p_positive_given_disease) * p_disease /
+                               ( ( 1.0 - p_positive_given_disease) * p_disease +
+                                   (1.0 - p_positive_given_no_disease) * (1.0 - p_disease)))
+show(p_disease_given_negative)
+
+
+
+################################################################
+# 5.2 (B) Bayes Rule calculation on conditional table
+################################################################
+
+# determine the proportion of people who have the disease, given that their test result is positive.
+# intuitive answer
+99
+# Conditional Probability
+# Bayes Rule = P(A|B) = P(B|A) / P(B)
+# A = 100 
+# B = 5094
+99 / 5094
+
+
+
+################################################################
+# 6.1  Influence of Priors in each successfive flip 
+################################################################
+source("DBDA2Eprograms/DBDA2E-utilities.R")
+source("DBDA2Eprograms/BernBeta.R")
+
+# Flips H H T
+post  <- BernBeta(priorBetaAB = c(4, 4), Data = c(1) )
+post2 <- BernBeta(priorBetaAB = post, Data = c(1))   
+post3 <- BernBeta(priorBetaAB = post2, Data = c(0))
+
+# Flips T H H
+ppost  <- BernBeta(priorBetaAB = c(4, 4), Data = c(0) )
+ppost2 <- BernBeta(priorBetaAB = ppost, Data = c(1))   
+ppost3 <- BernBeta(priorBetaAB = ppost2, Data = c(1))
+
+# Regardlesss of the order of flips, the final posterior is the same
+
+
+################################################################
+# 6.2 Using HDI for Crediability Intervals 
+################################################################
+
+# 1 = Candidate A
+# 0 = Candidate B
+post <- BernBeta(priorBetaAB = c(1, 1), Data = c(rep(1, 58), rep(0, 100-58)),
+                 showHDI = TRUE,
+                 showCentTend =  TRUE)
+                 BernBeta()
+                 
+# The 95% HDI is 0.483 - 0.673 for a probability of Candidate A
+                 
+# Running another poll of 100 people finds candidate A at 57
+# What is the updated 95% HDI
+                 
+post2 <- BernBeta(priorBetaAB = post, Data = c(rep(1, 57), rep(0 , 100 - 57)),
+                  showHDI = TRUE,
+                  showCentTend = TRUE)
+
+# The updated 95% HDI is 0.506 - 0.642 fo a probability of Candidate A
+
+
+
+################################################################
+# 6.3 Crediability between tests of particpants biases
+################################################################
+
+# n = 50
+# radio by itself
+# F = 40
+# J = 10
+
+# Start with a uniform prior. F = 1, J = 0
+post <- BernBeta(priorBetaAB = c(1, 1), Data = c(rep(1, 40), rep(0, 10)),
+                 showHDI = TRUE)
+
+# Start with a uniform prior. F = 1, J = 0
+# word combination
+# F = 15
+# J = 35
+
+post2 <- BernBeta(priorBetaAB = c(1, 1), Data = c(rep(1, 15), rep(0, 35)),
+                  showHDI = TRUE)
+
+# Particpants were biased towards F in the first test as there was no ROPE around theta of 0.5, while in test two
+# particpants were biased towards J, as there was no ROPE around the theta of 0.5 (which would indicate no bias)
+
+
+################################################################
+# 6.4 Biased magic coin
+################################################################
+
+post = BernBeta( priorBetaAB=c(1,1)/100 , Data=c(rep(1,4),rep(0,1)) ,
+                 showHDI=TRUE , showCentTend="Mode" )
