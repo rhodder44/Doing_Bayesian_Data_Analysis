@@ -317,3 +317,34 @@ post2 <- BernBeta(priorBetaAB = c(1, 1), Data = c(rep(1, 15), rep(0, 35)),
 
 post = BernBeta( priorBetaAB=c(1,1)/100 , Data=c(rep(1,4),rep(0,1)) ,
                  showHDI=TRUE , showCentTend="Mode" )
+
+
+################################################################
+# 6.5 Predicting the next datum
+################################################################
+# predicting a bank minted fair coin. first 10 flips have been 9 heads. What is the precited prob of heads on 11th flip
+
+# Our prior belief is strong, as it is a bank minted coin. We use a betaprior of 1000 flips with 500 heads tails each
+post <- BernBeta(priorBetaAB = c(500, 500), Data = c(rep(1, 500), rep(0, 500)),
+                 showHDI = TRUE)
+
+# the new 10 flips (9H and 1T) updates the posterior
+post2 <- BernBeta(priorBetaAB = post, Data = c(rep(1, 9), rep(0, 1)),
+                  showCentTend =  TRUE,
+                  showHDI = TRUE)
+
+# while the likelihood based on the previous 10 results is shifted toward 90% heads. The strong prior keeps the posterior
+# at probability of heads around 50% (0.502)
+mean(c(478,522))
+mean(c(480,524)) 
+
+
+# Next, the coin we have is from a magic shop. Like the last example, flipping the coin 10 times results in 9 heads
+# What is the predicted probability of heads for the 11th flip
+
+# utilizing an unfair prior (biased of 0.1, 0.1) 
+post <- BernBeta(priorBetaAB = c(1,1)/100, Data = c(rep(1, 9), rep(0, 1)),
+                 showHDI = TRUE)
+
+# using the biased prior of either biased towards heads (1) or tails (0), Once we add the likelihood which is positioned
+# at 90% for heds, the mean gets pushed to 89.99 % chance of heads
