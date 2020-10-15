@@ -1,7 +1,7 @@
 graphics.off()
 rm(list=ls(all=TRUE))
 fileNameRoot="BernMetrop" # for output filenames
-source("DBDA2E-utilities.R")
+source("DBDA2Eprograms/DBDA2E-utilities.R")
 
 # Specify the data, to be used in the likelihood function.
 myData = c(rep(0,6),rep(1,14))
@@ -51,7 +51,7 @@ nRejected = 0
 
 # Now generate the random walk. The 't' index is time or trial in the walk.
 # Specify seed to reproduce same random walk:
-set.seed(47405)
+# set.seed(47405)
 # Specify standard deviation of proposal distribution:
 proposalSD = c(0.02,0.2,2.0)[2]
 for ( t in 1:(trajLength-1) ) {
@@ -119,5 +119,19 @@ if ( burnIn > 0 ) {
 #saveGraph( file=paste0( fileNameRoot , 
 #                        "SD" , proposalSD ,
 #                        "Init" , trajectory[1] ) , type="eps" )
+
+
+# Opens
+openGraph(height=7,width=3.5)
+layout(matrix(1:2,nrow=2))
+acf( acceptedTraj , lag.max=30 , col="skyblue" , lwd=3 )
+Len = length( acceptedTraj )
+Lag = 10
+trajHead = acceptedTraj[ 1 : (Len-Lag) ]
+trajTail = acceptedTraj[ (1+Lag) : Len ]
+plot( trajHead , trajTail , pch="." , col="skyblue" ,
+      main=bquote( list( "Prpsl.SD" == .(proposalSD) ,
+                         lag == .(Lag) ,
+                         cor == .(round(cor(trajHead,trajTail),3)))) )
 
 #------------------------------------------------------------------------

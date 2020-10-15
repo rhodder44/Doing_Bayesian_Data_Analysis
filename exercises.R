@@ -348,3 +348,39 @@ post <- BernBeta(priorBetaAB = c(1,1)/100, Data = c(rep(1, 9), rep(0, 1)),
 
 # using the biased prior of either biased towards heads (1) or tails (0), Once we add the likelihood which is positioned
 # at 90% for heds, the mean gets pushed to 89.99 % chance of heads
+
+
+################################################################
+# 7.1  Experiment with the Metropolis algorithm 
+################################################################
+
+# Utilising the BernMetrop.R script, ran three MCMC chains with SD of 0.02, 0.2 and 2. The accepatance ratio was good
+# for 0.02, moderate for 0,2 and bad for 2. While the ESS was above 10,000 for 0,2 but very poor for 0.02 and 2.
+
+
+################################################################
+# 7.2  Explore the autocorrelation function 
+################################################################
+
+# A) paste below code to bottom of BernMetrop.R script and comment what each line does
+
+# Opens an external graphic device
+openGraph(height=7,width=3.5)
+# Sets the layout as a 1 column and 2 row matrix
+layout(matrix(1:2,nrow=2))
+# estimates and plots autocorrealtion. This uses a lag.max of 30 and plots color = skyblue, linewidth = 3
+acf( acceptedTraj , lag.max=30 , col="skyblue" , lwd=3 )
+# Creates a length variable based on the acceptedTraj variable
+Len = length( acceptedTraj )
+# Creates a lag variable based on a lag of 10 which is specified
+Lag = 10
+# Subsets the accepted traj head
+trajHead = acceptedTraj[ 1 : (Len-Lag) ]
+# Subsets the accepted traj tail
+trajTail = acceptedTraj[ (1+Lag) : Len ] # also adds lag to orginal traj
+# plots orginal traj against lag traj, uses lag and also a correlation of the head and tail
+plot( trajHead , trajTail , pch="." , col="skyblue" ,
+      main=bquote( list( "Prpsl.SD" == .(proposalSD) ,
+                         lag == .(Lag) ,
+                         cor == .(round(cor(trajHead,trajTail),3)))) )
+
