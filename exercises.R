@@ -2,6 +2,7 @@
 # EXERCISES
 ####################
 
+library(rethinking)
 ################################################################
 # 4.1 write what each line of the below code does
 ################################################################
@@ -378,9 +379,39 @@ Lag = 10
 trajHead = acceptedTraj[ 1 : (Len-Lag) ]
 # Subsets the accepted traj tail
 trajTail = acceptedTraj[ (1+Lag) : Len ] # also adds lag to orginal traj
-# plots orginal traj against lag traj, uses lag and also a correlation of the head and tail
+# plots original traj against lag traj, uses lag and also a correlation of the head and tail
 plot( trajHead , trajTail , pch="." , col="skyblue" ,
       main=bquote( list( "Prpsl.SD" == .(proposalSD) ,
                          lag == .(Lag) ,
                          cor == .(round(cor(trajHead,trajTail),3)))) )
+
+
+# B) Run exerices 7.1 again for each sd value with the 7.2 code also. Makre sure lag ACF is same as scatter plot
+# [1] cor = 0.838 - and aligns with ACF at lag 10
+# [2] cor = 0.003 - and aligns with ACF at lag 10
+# [3] cor = 0.467 - and aligns with ACF at lag 10
+
+# C) When the proposal distribution has SD=2, why does the scatter plot have a dense line of points on the diagonal?
+# Both traj_tail and traj_head step towards 1 instead of 0, so are correalted more.
+
+
+
+#####################################################################################################
+# 7.3 Metropolis algorithm, and seeing how chains can transition across modes or get stuck within
+#####################################################################################################
+
+# A) Consider mutlimodel distribution centred around priors of 0.0, 0.5 and 1
+
+# B) Make a plot of the prior. Hint: theta = seq(0,1,length=501); plot (theta , (cos(4*pi*theta)+1)ˆ2/1.5 )
+source("DBDA2Eprograms/DBDA2E-utilities.R")
+
+openGraph()
+theta = seq(0, 1, length = 501)
+#plot(theta, (cos(4*pi*theta)+1)ˆ2/1.5, type = "1",  lwd  = 3, col  = "skyblue")
+# COULDNT GET HIS PLOT WORKING      
+
+# C) In the script BernMetrop.R, find the function definition that specifies the prior distribution. Inside that 
+# function definition, comment out the line that assigns a beta density to pTheta,
+
+
 

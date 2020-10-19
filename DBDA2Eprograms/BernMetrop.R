@@ -4,7 +4,7 @@ fileNameRoot="BernMetrop" # for output filenames
 source("DBDA2Eprograms/DBDA2E-utilities.R")
 
 # Specify the data, to be used in the likelihood function.
-myData = c(rep(0,6),rep(1,14))
+ myData = c(rep(0,6),rep(1,14))
 
 # Define the Bernoulli likelihood function, p(D|theta).
 # The argument theta could be a vector, not just a scalar.
@@ -21,7 +21,8 @@ likelihood = function( theta , data ) {
 
 # Define the prior density function. 
 prior = function( theta ) {
-  pTheta = dbeta( theta , 1 , 1 )
+  # pTheta = dbeta( theta , 1 , 1 )
+  pTheta = (cos(4*pi*theta)+1)ˆ2/1.5
   # The theta values passed into this function are generated at random,
   # and therefore might be inadvertently greater than 1 or less than 0.
   # The prior for theta > 1 or for theta < 0 is zero:
