@@ -3,6 +3,7 @@
 ####################
 
 library(rethinking)
+library(tidyverse)
 ################################################################
 # 4.1 write what each line of the below code does
 ################################################################
@@ -414,4 +415,8 @@ theta = seq(0, 1, length = 501)
 # function definition, comment out the line that assigns a beta density to pTheta,
 
 
+#####################################################################################################
+# 8.1 Run the high level scripts with other data to see how easy they are.
+#####################################################################################################
 
+exercise_8_data <- read.csv("test.csv")

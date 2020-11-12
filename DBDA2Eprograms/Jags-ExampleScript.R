@@ -26,11 +26,12 @@ dataList = list(    # Put the information into a list.
 modelString = "
 model {
   for ( i in 1:Ntotal ) {
-    y[i] ~ dbern( theta )
-  }
-  theta ~ dbeta( 1 , 1 )
+    y[i] ~ dbern( theta )         # likelihood
+  } 
+  theta ~ dbeta( 1 , 1 )          # prior
 }
-" # close quote for modelString
+"  # close quote for modelString
+
 writeLines( modelString , con="TEMPmodel.txt" )
 
 # Initialize the chains based on MLE of data.
@@ -40,15 +41,15 @@ writeLines( modelString , con="TEMPmodel.txt" )
 # Option: Use function that generates random values for each chain:
 initsList = function() {
   resampledY = sample( y , replace=TRUE )
-  thetaInit = sum(resampledY)/length(resampledY)
+  thetaInit = sum(resampledY)/length(resampledY)    # this gets the MLE
   thetaInit = 0.001+0.998*thetaInit # keep away from 0,1
   return( list( theta=thetaInit ) )
 }
 
 # Run the chains:
-jagsModel = jags.model( file="TEMPmodel.txt" , data=dataList , inits=initsList , 
-                        n.chains=3 , n.adapt=500 )
-update( jagsModel , n.iter=500 )
+jagsModel = jags.model( file="TEMPmodel.txt" , data=dataList , inits=initsList ,         # Jags model takes in arguments (1. model specification 2. data 3. initial starting points 4. # of chains 5. # of steps)
+                        n.chains=3 , n.adapt=500 )                                       # Removing the third argument (initial starting points), will force JAGS to create its own starting points.
+update( jagsModel , n.iter=500 )                                                         
 codaSamples = coda.samples( jagsModel , variable.names=c("theta") ,
                             n.iter=3334 )
 save( codaSamples , file=paste0(fileNameRoot,"Mcmc.Rdata") )
